@@ -1,626 +1,605 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Final Year Module Deadlines</title>
+  <title>Module Deadline & Task Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.35); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.6); }
-    .drawer-backdrop {
-      background: rgba(15, 23, 42, 0.4);
-      backdrop-filter: blur(4px);
-    }
+    body { font-family: 'Inter', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
-<body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased transition-colors duration-150 flex flex-col">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
-  <header class="border-b border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-30">
-    <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="w-7 h-7 rounded-lg bg-slate-900 dark:bg-white flex items-center justify-center text-white dark:text-slate-900">
-          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-        </div>
-        <h1 class="text-sm font-semibold tracking-tight text-slate-900 dark:text-white">Module Deadlines</h1>
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold tracking-tight text-slate-900">Final Year Deadlines</h1>
+        <p class="text-xs text-slate-500">Academic Year 2026/2027</p>
       </div>
-
-      <div class="flex items-center gap-2">
-        <button id="addDateBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-white transition">
-          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-          <span>Set Date</span>
-        </button>
-        <button id="themeToggleBtn" title="Toggle theme" class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-          <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
-        </button>
-      </div>
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+        Active Semester
+      </span>
     </div>
   </header>
 
-  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
 
-    <!-- 1. Module Selection Pills -->
-    <div class="space-y-2">
-      <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-        <span class="font-medium uppercase tracking-wider text-[11px]">Select Module</span>
-        <span id="filteredStats" class="text-[11px]"></span>
-      </div>
-
-      <div class="flex items-center gap-1.5 overflow-x-auto pb-1" id="moduleTabsList">
-        <button data-module="ALL" class="module-tab px-3.5 py-1.5 text-xs font-medium rounded-full transition whitespace-nowrap bg-slate-900 text-white dark:bg-white dark:text-slate-900">
-          All Modules
-        </button>
-        <button data-module="FYP" class="module-tab px-3.5 py-1.5 text-xs font-medium rounded-full transition whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800">
-          Final Year Project <span class="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">(Double Credit)</span>
-        </button>
-        <button data-module="CONCURRENT" class="module-tab px-3.5 py-1.5 text-xs font-medium rounded-full transition whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800">
-          Concurrent
-        </button>
-        <button data-module="FORMAL" class="module-tab px-3.5 py-1.5 text-xs font-medium rounded-full transition whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800">
-          Formal Methods
-        </button>
-        <button data-module="CYBER" class="module-tab px-3.5 py-1.5 text-xs font-medium rounded-full transition whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800">
-          Cyber Security
-        </button>
-        <button data-module="OORO" class="module-tab px-3.5 py-1.5 text-xs font-medium rounded-full transition whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800">
-          OORO
-        </button>
-      </div>
-    </div>
-
-    <!-- 2. Brief Deadlines List -->
-    <div class="space-y-3">
-      <div class="flex items-center justify-between pb-1">
-        <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          Upcoming Deadlines
-        </h2>
-        <span class="text-xs text-slate-400">Click item to view details</span>
-      </div>
-
-      <div id="deadlinesList" class="space-y-2">
+    <!-- Module Selector Tabs -->
+    <section>
+      <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Select Module</label>
+      <div id="moduleTabs" class="flex flex-wrap gap-2">
         <!-- Rendered via JS -->
       </div>
-    </div>
+    </section>
+
+    <!-- Deadlines List Header -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 id="sectionTitle" class="text-sm font-semibold text-slate-700 uppercase tracking-wider">Upcoming Deadlines</h2>
+        <span id="counterBadge" class="text-xs text-slate-500 font-medium"></span>
+      </div>
+
+      <!-- Deadline Cards Container -->
+      <div id="deadlineList" class="space-y-3">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
   </main>
 
-  <div id="drawerOverlay" class="fixed inset-0 z-50 drawer-backdrop opacity-0 pointer-events-none transition-opacity duration-200 flex justify-end">
-    <div id="drawerPanel" class="w-full max-w-md bg-white dark:bg-slate-900 h-full shadow-xl flex flex-col transform translate-x-full transition-transform duration-200 ease-out border-l border-slate-200 dark:border-slate-800">
-      
-      <!-- Drawer Header -->
-      <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between gap-3">
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span id="drawerModuleBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"></span>
-            <span id="drawerWeightBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"></span>
-          </div>
-          <h3 id="drawerTitle" class="text-base font-bold text-slate-900 dark:text-white"></h3>
-          <p id="drawerDate" class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5"></p>
+  <!-- Slide-Over Detail Drawer -->
+  <div id="drawerOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden transition-opacity" onclick="closeDrawer()"></div>
+  <aside id="detailDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-200 ease-in-out flex flex-col">
+    <!-- Drawer Header -->
+    <div class="p-5 border-b border-slate-200 flex items-start justify-between bg-slate-50">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span id="drawerBadge" class="text-xs font-semibold px-2 py-0.5 rounded border"></span>
+          <span id="drawerModule" class="text-xs font-medium text-slate-500"></span>
         </div>
-
-        <button id="closeDrawerBtn" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+        <h3 id="drawerTitle" class="text-lg font-bold text-slate-900 leading-snug"></h3>
+        <p id="drawerDate" class="text-xs font-semibold text-indigo-600 mt-1"></p>
       </div>
-
-      <!-- Drawer Body Content -->
-      <div class="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
-        
-        <!-- Mandatory Warning Box (if exists) -->
-        <div id="drawerWarningBox" class="hidden p-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200 space-y-1">
-          <div class="flex items-center gap-1.5 font-semibold">
-            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0"></i>
-            <span>Important Assessment Rule</span>
-          </div>
-          <p id="drawerWarningText" class="leading-relaxed pl-5.5"></p>
-        </div>
-
-        <!-- Format & Purpose -->
-        <div id="drawerFormatSection" class="hidden space-y-1 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
-          <span class="font-semibold text-slate-500 dark:text-slate-400 text-[10px] uppercase">Format / Purpose</span>
-          <p id="drawerFormatText" class="text-slate-700 dark:text-slate-300 leading-relaxed"></p>
-        </div>
-
-        <!-- Deliverables / What Should We Do -->
-        <div class="space-y-2">
-          <h4 class="font-semibold uppercase text-slate-500 dark:text-slate-400 text-[11px] tracking-wide flex items-center gap-1.5">
-            <i data-lucide="list-checks" class="w-3.5 h-3.5 text-blue-600"></i>
-            What Should We Do / Content Required
-          </h4>
-          <ul id="drawerTasksList" class="space-y-1.5 text-slate-700 dark:text-slate-300">
-            <!-- Injected via JS -->
-          </ul>
-        </div>
-      </div>
-
-      <!-- Drawer Footer -->
-      <div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex justify-end">
-        <button id="closeDrawerBtnBottom" class="px-3 py-1.5 text-xs font-medium bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg transition">
-          Close
-        </button>
-      </div>
-
+      <button onclick="closeDrawer()" class="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
     </div>
-  </div>
 
-  <div id="setDateModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-sm w-full p-4 shadow-xl">
-      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Set / Update Date</h3>
-        <button id="closeDateModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <form id="dateForm" class="space-y-3 mt-3 text-xs">
-        <div>
-          <label class="block text-slate-600 dark:text-slate-400 mb-1">Select Item</label>
-          <select id="dateTargetSelect" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white outline-none">
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-slate-600 dark:text-slate-400 mb-1">Date & Time / Text</label>
-          <input type="text" id="dateInputVal" placeholder="e.g. 15 Nov 2026 or 2026-11-15 14:00" required class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white outline-none">
-        </div>
-
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <button type="button" id="cancelDateModalBtn" class="px-3 py-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">Cancel</button>
-          <button type="submit" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 text-white rounded-lg font-medium">Save</button>
-        </div>
-      </form>
+    <!-- Drawer Content (Scrollable) -->
+    <div id="drawerBody" class="p-6 overflow-y-auto space-y-5 flex-1 custom-scrollbar text-sm">
+      <!-- Injected via JS -->
     </div>
-  </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
+      <button onclick="closeDrawer()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition">
+        Close
+      </button>
+    </div>
+  </aside>
 
   <script>
-    // Modules list
-    const MODULES = {
-      FYP: { name: 'Final Year Project', badge: 'Double Credited' },
-      CONCURRENT: { name: 'Concurrent', badge: '' },
-      FORMAL: { name: 'Formal Methods', badge: '' },
-      CYBER: { name: 'Cyber Security', badge: '' },
-      OORO: { name: 'OORO', badge: '' }
-    };
+    // --- EXACT DATA SET (No Hallucinations) ---
+    const modules = [
+      { id: "all", name: "All Modules" },
+      { id: "fyp", name: "Final Year Project (Double Credit)" },
+      { id: "concurrent", name: "Concurrent Programming" },
+      { id: "formal", name: "Formal Methods" },
+      { id: "cyber", name: "Cyber Security" },
+      { id: "ooro", name: "OORO" }
+    ];
 
-    // Strictly the user's provided data ONLY
-    const INITIAL_DEADLINES = [
-      // FYP Formatives
+    const deadlines = [
+      // 1. FYP - Formative A
       {
-        id: 'fyp-formative-1',
-        module: 'FYP',
-        title: 'Initial Project Idea & Supervisor Request',
-        type: 'Formative',
-        weight: 'Ungraded / Feedback Only',
-        dateText: '5 October 2026 (1:00 pm)',
-        isoDate: '2026-10-05T13:00:00',
-        formatText: 'Formative submissions do not carry marks toward your final grade; their purpose is to provide supervisor feedback and ensure your project is on track.',
-        warningText: '',
-        tasks: [
-          'Submit tentative project title',
-          'Domain & initial problem statement',
-          'Proposed direction & scope',
-          'Preliminary search terms',
-          'Indicate preferred supervisors to assist with supervisor allocation'
+        id: "fyp-formative-a",
+        moduleId: "fyp",
+        moduleName: "Final Year Project",
+        title: "Initial Project Idea & Supervisor Request",
+        dateDisplay: "5 October 2026 (1:00 pm)",
+        dateISO: "2026-10-05T13:00:00",
+        type: "Formative",
+        weight: "Ungraded / Feedback Only",
+        summary: "Submit tentative title, problem statement, scope, search terms, and supervisor request.",
+        warning: null,
+        details: [
+          {
+            section: "Things to Do & Deliverables",
+            items: [
+              "Submit a tentative project title and chosen domain.",
+              "Draft initial problem statement, proposed direction, and project scope.",
+              "Provide preliminary academic search terms.",
+              "Indicate preferred supervisors to assist with supervisor allocation."
+            ]
+          },
+          {
+            section: "Important Note",
+            items: [
+              "Formative submissions do not carry marks toward your final grade; their purpose is to provide supervisor feedback and ensure your project is on track."
+            ]
+          }
+        ]
+      },
+      // 2. FYP - Formative B
+      {
+        id: "fyp-formative-b",
+        moduleId: "fyp",
+        moduleName: "Final Year Project",
+        title: "Project Proposal (PP) Formative Submission",
+        dateDisplay: "19 October 2026",
+        dateISO: "2026-10-19T23:59:59",
+        type: "Formative",
+        weight: "Ungraded / Feedback Only",
+        summary: "Draft PP package to supervisor including problem, requirements, architecture, and Gantt chart.",
+        warning: null,
+        details: [
+          {
+            section: "Things to Do / Content to Submit",
+            items: [
+              "Submit draft PP package to your supervisor for improvement guidance.",
+              "Defined problem statement, research gap, research questions (RQs), project aim, and measurable objectives.",
+              "Initial literature/background review matrix and proposed technical contribution.",
+              "Preliminary stakeholder analysis, functional (FR) and non-functional (NFR) requirements.",
+              "System context diagram, preliminary architecture, and technology considerations.",
+              "Draft methodology, dataset strategy, baseline evaluation plan, ethics draft, Work Breakdown Structure (WBS), Gantt chart, and risk register.",
+              "Draft presentation slides and handout."
+            ]
+          }
+        ]
+      },
+      // 3. FYP - Summative 1
+      {
+        id: "fyp-summative-1",
+        moduleId: "fyp",
+        moduleName: "Final Year Project",
+        title: "Project Proposal (PP) Presentation & Defense",
+        dateDisplay: "5 November 2026",
+        dateISO: "2026-11-05T23:59:59",
+        type: "Summative",
+        weight: "15% Weighting",
+        summary: "Live presentation (20 min) + Q&A (20 min). Mandatory signed ethics form required.",
+        warning: "Mandatory Qualifying Condition: You must submit a signed Ethics Application / Clearance Form by the deadline. If missing, the overall PP mark will be zero.",
+        details: [
+          {
+            section: "Format",
+            items: [
+              "Live presentation (up to 20 minutes) + examiner Q&A (~20 minutes).",
+              "Supported by submitted slides via Blackboard."
+            ]
+          },
+          {
+            section: "Content Required & Rubrics Breakdown",
+            items: [
+              "Problem & Project Goal (10%): Define a clear, evidence-based software engineering problem, target users, and expected outcomes.",
+              "Background & Evidence (10%): Present thematic literature review, compare existing solutions, and define clear research gap.",
+              "Initial Requirements & Indicative Solution (20%): Detailed requirements engineering (FRs, NFRs, data/model rules, boundaries) and indicative system architecture.",
+              "Methodology & Development Approach (15%): Research design (evaluation protocol, validity) and iterative software development lifecycle.",
+              "Project Plan, Feasibility & Risk (10%): Realistic stages, milestones, dependencies, WBS, Gantt chart, risks, and mitigations.",
+              "Responsible Project Considerations (10%): Ethics, privacy/data protection, security, accessibility/EDI, and sustainability.",
+              "Scope & Level 6 Depth (10%): Defend technical challenge, novelty, and achievable boundaries.",
+              "Academic Practice & Referencing (5%): Accurate Harvard citations distinguishing external work from your contribution.",
+              "Communication & Defense (10%): Deliver structured oral/visual presentation slides and defend choices during examiner Q&A.",
+              "(Optional): Present a Proof-of-Concept (PoC) targeting your highest-risk technical element."
+            ]
+          },
+          {
+            section: "Assessment Regulations",
+            items: [
+              "30% Qualifying Threshold applies: You must score at least 30% on this component.",
+              "Failure to submit signed ethics form results in automatic 0% for the entire proposal."
+            ]
+          }
+        ]
+      },
+      // 4. Concurrent Programming Coursework
+      {
+        id: "concurrent-cw",
+        moduleId: "concurrent",
+        moduleName: "Concurrent Programming",
+        title: "Coursework: Multi-threaded Java Application & Vodcast",
+        dateDisplay: "Before 13:00, 6 January 2027",
+        dateISO: "2027-01-06T13:00:00",
+        type: "Summative",
+        weight: "50% Weighting",
+        summary: "2 Concurrency Scenarios in Java (60 Marks) + Technical Vodcast (40 Marks) + Mandatory Viva.",
+        warning: "Qualifying Mark: 30%. If a Vodcast is not submitted, your overall coursework grade is capped at 40%. In the Vodcast, your face must be visible at all times and reading from a script is forbidden under penalty of forfeiting all 40 marks.",
+        details: [
+          {
+            section: "Scenario 1: Northbridge Regional Health Trust (30 Marks)",
+            items: [
+              "Task 1 - BookingStats Class (10 Marks): Create a thread-safe statistics tracker recording successful and failed bookings using appropriate thread-safe data structures. Method must display total time taken, patients processed, success/failure counts, and success rate %.",
+              "Task 2 - NewBookingSystem Class (20 Marks): Process concurrent bookings for 10,000 up to 250,000+ patients. Simulate delays contacting external services (records DB, scheduling system, SMS/email). Handle exceptions gracefully so one failure does not halt others. Wait for all bookings to finish, measure total execution time, and display results."
+            ]
+          },
+          {
+            section: "Scenario 2: The Late Plate Kitchen - Northbridge SU (30 Marks)",
+            items: [
+              "Continuous Order Arrivals (10 Marks): Handle random, continuous orders for Pizza, Burger, and Noodle stations arriving while chefs are cooking.",
+              "Automated Shift Management (10 Marks): Day shift (3 chefs, 12-hr) and Night shift (3 chefs, 12-hr). Automatic shift rotation and smooth handover without losing orders.",
+              "Concurrent Processing (10 Marks): Multiple chefs cooking concurrently according to their specific station. Thread-safe queue management with zero data corruption."
+            ]
+          },
+          {
+            section: "Vodcast & Viva Requirements (40 Marks)",
+            items: [
+              "Vodcast (~10 minutes): Execute solutions demonstrating outputs [10 Marks].",
+              "Technical Concurrency Justification [30 Marks]: Explain choice of concurrency control mechanisms, safety and liveness properties, resource sharing at Level 6 depth.",
+              "Mandatory Face-on-Screen: Student face must remain visible at all times. Script reading is strictly prohibited (forfeits all marks).",
+              "Viva Examination: Critical component. Marks allocated primarily on ability to demonstrate and defend code. Failure to adequately answer viva questions may result in a fail grade for the module."
+            ]
+          },
+          {
+            section: "Submission Deliverables & Rules",
+            items: [
+              "Java Source Code: Single ZIP archive named with your surname & 'CW' (e.g. surname_CW.zip) containing full runnable project structure (NetBeans or agreed IDE).",
+              "Vodcast: Submitted separately on Blackboard.",
+              "Late Penalty: Up to 24 hrs late loses 10 marks (marks 40-49% capped at 40%). More than 24 hrs late receives a mark of 0 unless Mitigating Circumstances (MC) are approved."
+            ]
+          }
+        ]
+      },
+      // 5. FYP - Summative 2
+      {
+        id: "fyp-summative-2",
+        moduleId: "fyp",
+        moduleName: "Final Year Project",
+        title: "Interim Progress Demonstration (IPD)",
+        dateDisplay: "28 January 2027",
+        dateISO: "2027-01-28T23:59:59",
+        type: "Summative",
+        weight: "15% Weighting",
+        summary: "Assess technical execution: working prototype/MVP, testing evidence, and recorded demo.",
+        warning: "Mandatory Qualifying Condition: 30% minimum pass mark.",
+        details: [
+          {
+            section: "Purpose",
+            items: [
+              "Assesses actual technical execution and progress made toward building the software artifact."
+            ]
+          },
+          {
+            section: "Things to Do & Content Required",
+            items: [
+              "Refined Requirements & System Architecture: Formalise logical, physical, deployment, and data/ML pipeline architectures with traceability matrices.",
+              "Core Working Implementation / Prototype: Present deployable or hosted working prototype/MVP containing research-critical core functionality.",
+              "Applied Methodology & Testing: Provide preliminary unit/integration testing results and baseline experimental evaluation evidence.",
+              "Recorded Demonstration Video: Submit video evidence showing the working prototype in action.",
+              "Schedule & Change Defense: Document progress against plan, schedule deviation/recovery actions, and justify changes from original PP."
+            ]
+          }
+        ]
+      },
+      // 6. FYP - Summative 3
+      {
+        id: "fyp-summative-3",
+        moduleId: "fyp",
+        moduleName: "Final Year Project",
+        title: "Final Project, Report & Code",
+        dateDisplay: "5 April 2027",
+        dateISO: "2027-04-05T23:59:59",
+        type: "Summative",
+        weight: "50% Weighting",
+        summary: "Full written dissertation, complete source code repository, and recorded MVP demo.",
+        warning: "Mandatory Qualifying Condition: 30% minimum pass mark.",
+        details: [
+          {
+            section: "Deliverables to Submit",
+            items: [
+              "Written Dissertation / Final Report: Problem & Background, Literature & Gap Analysis, Requirements, Architecture & Design, Implementation, Testing & QA, Experimental Evaluation, Discussion, Limitations, Ethics, and Conclusions.",
+              "Code & Implementation Package: Full source repository, versioned models/scripts, build configuration, preprocessing, and deployment instructions with proven code authorship.",
+              "Recorded System Demonstration: Complete end-to-end video showcasing the Minimum Viable Project (MVP)."
+            ]
+          }
+        ]
+      },
+      // 7. FYP - Summative 4
+      {
+        id: "fyp-summative-4",
+        moduleId: "fyp",
+        moduleName: "Final Year Project",
+        title: "Final Project Viva",
+        dateDisplay: "19 April – 14 May 2027",
+        dateISO: "2027-04-19T00:00:00",
+        type: "Summative",
+        weight: "20% Weighting",
+        summary: "Live examination: oral presentation, live software demo, and defense with internal examiners.",
+        warning: "Mandatory Qualifying Condition: 30% minimum pass mark.",
+        details: [
+          {
+            section: "Format & What to Defend",
+            items: [
+              "Concise summary of project journey and live demonstration of the software.",
+              "Defend requirements, architecture, technical design, implementation choices, and code ownership.",
+              "Defend research methodology, experimental evaluation, metrics, findings, limitations, and future work."
+            ]
+          }
+        ]
+      },
+      // 8. Placeholders for other announced components
+      {
+        id: "concurrent-ict",
+        moduleId: "concurrent",
+        moduleName: "Concurrent Programming",
+        title: "In-Class Test (ICT)",
+        dateDisplay: "Date to be announced",
+        dateISO: null,
+        type: "Summative",
+        weight: "Assessment Component",
+        summary: "In-class test component for Concurrent Programming module.",
+        warning: null,
+        details: [
+          {
+            section: "Information",
+            items: [
+              "Official schedule and guidelines have not been released by the module leader yet."
+            ]
+          }
         ]
       },
       {
-        id: 'fyp-formative-2',
-        module: 'FYP',
-        title: 'Project Proposal (PP) Formative Submission',
-        type: 'Formative',
-        weight: 'Ungraded / Feedback Only',
-        dateText: '19 October 2026',
-        isoDate: '2026-10-19T23:59:00',
-        formatText: 'Allows your supervisor to review your progress and provide improvement guidance before the final graded proposal.',
-        warningText: '',
-        tasks: [
-          'Submit a draft PP package to your supervisor',
-          'Defined problem statement, research gap, research questions (RQs), project aim, and measurable objectives',
-          'Initial literature/background review matrix and proposed technical contribution',
-          'Preliminary stakeholder analysis, functional (FR) and non-functional (NFR) requirements',
-          'System context diagram, preliminary architecture, and technology considerations',
-          'Draft methodology, dataset strategy, baseline evaluation plan, ethics draft, Work Breakdown Structure (WBS), Gantt chart, and risk register',
-          'Draft presentation slides and handout'
-        ]
-      },
-
-      // FYP Summatives
-      {
-        id: 'fyp-summative-1',
-        module: 'FYP',
-        title: 'Project Proposal (PP)',
-        type: 'Summative',
-        weight: '15% Weighting',
-        dateText: '5 November 2026',
-        isoDate: '2026-11-05T23:59:00',
-        formatText: 'Live presentation (up to 20 minutes) + examiner Q&A (~20 minutes) supported by submitted slides via Blackboard.',
-        warningText: 'MANDATORY QUALIFYING CONDITION: You must submit a signed Ethics Application / Clearance Form by the deadline. If missing, the overall PP mark will be zero. 30% pass threshold applies.',
-        tasks: [
-          'MANDATORY: Submit signed Ethics Application / Clearance Form by deadline',
-          'Problem & Project Goal (10%): Define a clear, evidence-based software engineering problem, target users, and expected outcomes',
-          'Background & Evidence (10%): Present a thematic literature review, compare existing solutions, and define a clear research gap',
-          'Initial Requirements & Indicative Solution (20%): Detailed requirements engineering (FRs, NFRs, data/model rules, boundaries) and indicative system architecture',
-          'Methodology & Development Approach (15%): Explain both research design (evaluation protocol, validity) and iterative software development lifecycle',
-          'Project Plan, Feasibility & Risk (10%): Provide realistic stages, milestones, dependencies, WBS, Gantt chart, risks, and mitigations',
-          'Responsible Project Considerations (10%): Address ethics, privacy/data protection, security, accessibility/EDI, and sustainability',
-          'Scope & Level 6 Depth (10%): Defend technical challenge, novelty, and achievable boundaries',
-          'Academic Practice & Referencing (5%): Accurate Harvard citations distinguishing external work from your contribution',
-          'Communication & Defense (10%): Deliver structured oral/visual presentation slides and defend choices during examiner Q&A',
-          '(Optional): Present a Proof-of-Concept (PoC) targeting your highest-risk technical element to demonstrate feasibility'
+        id: "formal-cw",
+        moduleId: "formal",
+        moduleName: "Formal Methods",
+        title: "Coursework",
+        dateDisplay: "Date to be announced",
+        dateISO: null,
+        type: "Summative",
+        weight: "Assessment Component",
+        summary: "Coursework component for Formal Methods module.",
+        warning: null,
+        details: [
+          {
+            section: "Information",
+            items: [
+              "Module coursework brief and submission date have not been published yet."
+            ]
+          }
         ]
       },
       {
-        id: 'fyp-summative-2',
-        module: 'FYP',
-        title: 'Interim Progress Demonstration (IPD)',
-        type: 'Summative',
-        weight: '15% Weighting',
-        dateText: '28 January 2027',
-        isoDate: '2027-01-28T23:59:00',
-        formatText: 'Assesses actual technical execution and progress made toward building the software artifact.',
-        warningText: '30% qualifying threshold applies.',
-        tasks: [
-          'Refined Requirements & System Architecture: Formalise logical, physical, deployment, and data/ML pipeline architectures with traceability matrices',
-          'Core Working Implementation / Prototype: Present a deployable or hosted working prototype/MVP containing research-critical core functionality',
-          'Applied Methodology & Testing: Provide preliminary unit/integration testing results and baseline experimental evaluation evidence',
-          'Recorded Demonstration Video: Submit video evidence showing the working prototype in action',
-          'Schedule & Change Defense: Document progress against your plan, schedule deviation/recovery actions, and justify any changes made from your original PP'
+        id: "formal-ict",
+        moduleId: "formal",
+        moduleName: "Formal Methods",
+        title: "In-Class Test (ICT)",
+        dateDisplay: "Date to be announced",
+        dateISO: null,
+        type: "Summative",
+        weight: "Assessment Component",
+        summary: "In-class test component for Formal Methods module.",
+        warning: null,
+        details: [
+          {
+            section: "Information",
+            items: ["ICT date and syllabus to be announced."]
+          }
         ]
       },
       {
-        id: 'fyp-summative-3',
-        module: 'FYP',
-        title: 'Final Project, Report & Code',
-        type: 'Summative',
-        weight: '50% Weighting',
-        dateText: '5 April 2027',
-        isoDate: '2027-04-05T23:59:00',
-        formatText: 'Assesses the completed software deliverable, code quality, and documented research/engineering process.',
-        warningText: '30% qualifying threshold applies.',
-        tasks: [
-          'Written Dissertation / Final Report: Problem & Background, Literature & Gap Analysis, Requirements Engineering, System Architecture & Detailed Design, Implementation details, Testing & Quality Assurance, Experimental Evaluation & Results, Critical Discussion/Contribution, Limitations, Ethics, and Conclusions',
-          'Code & Implementation Package: Full source code repository, versioned models/scripts, build configuration, dataset preprocessing, and deployment instructions (Must prove authorship and line-by-line understanding)',
-          'Recorded System Demonstration: Complete end-to-end video demonstration showcasing the Minimum Viable Project (MVP)'
+        id: "cyber-cw",
+        moduleId: "cyber",
+        moduleName: "Cyber Security",
+        title: "Coursework",
+        dateDisplay: "Date to be announced",
+        dateISO: null,
+        type: "Summative",
+        weight: "Assessment Component",
+        summary: "Coursework component for Cyber Security module.",
+        warning: null,
+        details: [
+          {
+            section: "Information",
+            items: ["Specification and submission deadlines to be announced."]
+          }
         ]
       },
       {
-        id: 'fyp-summative-4',
-        module: 'FYP',
-        title: 'Final Project Viva',
-        type: 'Summative',
-        weight: '20% Weighting',
-        dateText: '19 April – 14 May 2027',
-        isoDate: '2027-04-19T09:00:00',
-        formatText: 'Live examination with internal examiners including oral presentation, live software demo, and Q&A defense.',
-        warningText: '30% qualifying threshold applies.',
-        tasks: [
-          'Deliver a concise summary of your project journey',
-          'Give a live demonstration of the software',
-          'Defend requirements, architecture, technical design, implementation choices, and code ownership',
-          'Defend research methodology, experimental evaluation, metrics, findings, limitations, and future work'
+        id: "cyber-ict",
+        moduleId: "cyber",
+        moduleName: "Cyber Security",
+        title: "In-Class Test (ICT)",
+        dateDisplay: "Date to be announced",
+        dateISO: null,
+        type: "Summative",
+        weight: "Assessment Component",
+        summary: "In-class test component for Cyber Security module.",
+        warning: null,
+        details: [
+          {
+            section: "Information",
+            items: ["ICT date to be announced."]
+          }
         ]
       },
-
-      // Other modules: ONLY Coursework and ICT, no invented dates or percentages
       {
-        id: 'conc-cw',
-        module: 'CONCURRENT',
-        title: 'Coursework',
-        type: 'Coursework',
-        weight: '',
-        dateText: 'Date to be announced',
-        isoDate: '',
-        formatText: 'Coursework assessment for Concurrent programming module.',
-        tasks: ['Specific brief and submission date will appear here when announced.']
+        id: "ooro-cw",
+        moduleId: "ooro",
+        moduleName: "OORO",
+        title: "Coursework",
+        dateDisplay: "Date to be announced",
+        dateISO: null,
+        type: "Summative",
+        weight: "Assessment Component",
+        summary: "Coursework component for OORO module.",
+        warning: null,
+        details: [
+          {
+            section: "Information",
+            items: ["Specification and deadline to be announced."]
+          }
+        ]
       },
       {
-        id: 'conc-ict',
-        module: 'CONCURRENT',
-        title: 'ICT Exam',
-        type: 'ICT',
-        weight: '',
-        dateText: 'Date to be announced',
-        isoDate: '',
-        formatText: 'In-course timed assessment (ICT) for Concurrent programming.',
-        tasks: ['Exam timetable to be confirmed by module leader.']
-      },
-      {
-        id: 'formal-cw',
-        module: 'FORMAL',
-        title: 'Coursework',
-        type: 'Coursework',
-        weight: '',
-        dateText: 'Date to be announced',
-        isoDate: '',
-        formatText: 'Coursework assessment for Formal Methods module.',
-        tasks: ['Specific brief and submission date will appear here when announced.']
-      },
-      {
-        id: 'formal-ict',
-        module: 'FORMAL',
-        title: 'ICT Exam',
-        type: 'ICT',
-        weight: '',
-        dateText: 'Date to be announced',
-        isoDate: '',
-        formatText: 'In-course timed assessment (ICT) for Formal Methods.',
-        tasks: ['Exam timetable to be confirmed by module leader.']
-      },
-      {
-        id: 'cyber-cw',
-        module: 'CYBER',
-        title: 'Coursework',
-        type: 'Coursework',
-        weight: '',
-        dateText: 'Date to be announced',
-        isoDate: '',
-        formatText: 'Coursework assessment for Cyber Security module.',
-        tasks: ['Specific brief and submission date will appear here when announced.']
-      },
-      {
-        id: 'cyber-ict',
-        module: 'CYBER',
-        title: 'ICT Exam',
-        type: 'ICT',
-        weight: '',
-        dateText: 'Date to be announced',
-        isoDate: '',
-        formatText: 'In-course timed assessment (ICT) for Cyber Security.',
-        tasks: ['Exam timetable to be confirmed by module leader.']
-      },
-      {
-        id: 'ooro-cw',
-        module: 'OORO',
-        title: 'Coursework',
-        type: 'Coursework',
-        weight: '',
-        dateText: 'Date to be announced',
-        isoDate: '',
-        formatText: 'Coursework assessment for OORO module.',
-        tasks: ['Specific brief and submission date will appear here when announced.']
-      },
-      {
-        id: 'ooro-ict',
-        module: 'OORO',
-        title: 'ICT Exam',
-        type: 'ICT',
-        weight: '',
-        dateText: 'Date to be announced',
-        isoDate: '',
-        formatText: 'In-course timed assessment (ICT) for OORO.',
-        tasks: ['Exam timetable to be confirmed by module leader.']
+        id: "ooro-ict",
+        moduleId: "ooro",
+        moduleName: "OORO",
+        title: "In-Class Test (ICT)",
+        dateDisplay: "Date to be announced",
+        dateISO: null,
+        type: "Summative",
+        weight: "Assessment Component",
+        summary: "In-class test component for OORO module.",
+        warning: null,
+        details: [
+          {
+            section: "Information",
+            items: ["ICT date to be announced."]
+          }
+        ]
       }
     ];
 
-    let deadlines = [];
-    let selectedModule = 'ALL';
+    let currentModule = "all";
 
-    function loadState() {
-      const saved = localStorage.getItem('strict_uni_deadlines_v1');
-      if (saved) {
-        try {
-          deadlines = JSON.parse(saved);
-        } catch (e) {
-          deadlines = JSON.parse(JSON.stringify(INITIAL_DEADLINES));
-        }
-      } else {
-        deadlines = JSON.parse(JSON.stringify(INITIAL_DEADLINES));
+    // --- RENDER MODULE FILTER TABS ---
+    function renderTabs() {
+      const container = document.getElementById("moduleTabs");
+      container.innerHTML = modules.map(m => {
+        const isActive = m.id === currentModule;
+        return `
+          <button onclick="selectModule('${m.id}')"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150 border ${
+              isActive 
+                ? 'bg-slate-900 text-white border-slate-900 shadow-xs' 
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+            }">
+            ${m.name}
+          </button>
+        `;
+      }).join('');
+    }
+
+    // --- RENDER DEADLINES LIST ---
+    function renderDeadlines() {
+      const listEl = document.getElementById("deadlineList");
+      const titleEl = document.getElementById("sectionTitle");
+      const counterEl = document.getElementById("counterBadge");
+
+      const filtered = deadlines.filter(d => currentModule === "all" || d.moduleId === currentModule);
+
+      const activeModuleName = modules.find(m => m.id === currentModule).name;
+      titleEl.textContent = currentModule === "all" ? "All Upcoming Milestones" : `${activeModuleName} Deadlines`;
+      counterEl.textContent = `${filtered.length} item${filtered.length === 1 ? '' : 's'}`;
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="bg-white p-6 rounded-xl border border-dashed border-slate-300 text-center text-slate-500 text-xs">No deadlines found for this module.</div>`;
+        return;
       }
-    }
 
-    function saveState() {
-      localStorage.setItem('strict_uni_deadlines_v1', JSON.stringify(deadlines));
-      renderList();
-    }
+      listEl.innerHTML = filtered.map(item => {
+        const isDated = item.dateISO !== null;
+        const tagColor = item.type === "Formative" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-indigo-50 text-indigo-700 border-indigo-200";
 
-    function renderList() {
-      const listEl = document.getElementById('deadlinesList');
-      const statsEl = document.getElementById('filteredStats');
-      listEl.innerHTML = '';
-
-      const filtered = deadlines.filter(d => selectedModule === 'ALL' || d.module === selectedModule);
-      statsEl.textContent = `${filtered.length} item${filtered.length === 1 ? '' : 's'}`;
-
-      filtered.forEach(item => {
-        const mod = MODULES[item.module];
-        const card = document.createElement('div');
-        const isFyp = item.module === 'FYP';
-        const isTba = item.dateText.includes('announced');
-
-        card.className = "p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer flex items-center justify-between gap-3";
-        card.onclick = () => openDrawer(item.id);
-
-        card.innerHTML = `
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
-                ${mod.name}
-              </span>
-              ${item.weight ? `<span class="text-[11px] text-blue-600 dark:text-blue-400 font-medium">${item.weight}</span>` : ''}
-              ${item.type && !item.weight ? `<span class="text-[11px] text-slate-500 dark:text-slate-400">${item.type}</span>` : ''}
+        return `
+          <div onclick="openDrawer('${item.id}')"
+            class="group bg-white p-4 rounded-xl border border-slate-200 hover:border-slate-400 hover:shadow-xs transition duration-150 cursor-pointer flex items-center justify-between gap-4">
+            
+            <div class="space-y-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded border ${tagColor}">${item.type}</span>
+                <span class="text-xs font-medium text-slate-400 truncate">${item.moduleName}</span>
+                <span class="text-xs font-medium text-slate-500">• ${item.weight}</span>
+              </div>
+              <h3 class="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition truncate">${item.title}</h3>
+              <p class="text-xs text-slate-500 truncate">${item.summary}</p>
             </div>
-            <div class="text-sm font-semibold text-slate-900 dark:text-white truncate">
-              ${item.title}
-            </div>
-          </div>
 
-          <div class="flex items-center gap-3 shrink-0">
-            <div class="text-right">
-              <span class="text-xs font-medium ${isTba ? 'text-slate-400 italic' : 'text-slate-700 dark:text-slate-200'}">
-                ${item.dateText}
+            <div class="text-right shrink-0">
+              <p class="text-xs font-semibold ${isDated ? 'text-slate-900' : 'text-slate-400'}">${item.dateDisplay}</p>
+              <span class="inline-flex items-center text-[11px] font-medium text-indigo-600 group-hover:underline mt-1">
+                View details
+                <svg class="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </span>
             </div>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+
           </div>
         `;
-        listEl.appendChild(card);
-      });
-
-      lucide.createIcons();
+      }).join('');
     }
 
+    // --- DRAWER ACTIONS ---
     function openDrawer(id) {
       const item = deadlines.find(d => d.id === id);
       if (!item) return;
 
-      const mod = MODULES[item.module];
-      document.getElementById('drawerModuleBadge').textContent = mod.name;
-      
-      const weightBadge = document.getElementById('drawerWeightBadge');
-      if (item.weight) {
-        weightBadge.textContent = item.weight;
-        weightBadge.classList.remove('hidden');
-      } else {
-        weightBadge.textContent = item.type;
-      }
+      document.getElementById("drawerModule").textContent = item.moduleName;
+      document.getElementById("drawerTitle").textContent = item.title;
+      document.getElementById("drawerDate").textContent = `Due Date: ${item.dateDisplay} (${item.weight})`;
 
-      document.getElementById('drawerTitle').textContent = item.title;
-      document.getElementById('drawerDate').innerHTML = `<i data-lucide="clock" class="w-3.5 h-3.5"></i> ${item.dateText}`;
+      const badge = document.getElementById("drawerBadge");
+      badge.textContent = item.type;
+      badge.className = `text-xs font-semibold px-2 py-0.5 rounded border ${
+        item.type === "Formative" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-indigo-50 text-indigo-700 border-indigo-200"
+      }`;
 
-      // Warning text
-      const warningBox = document.getElementById('drawerWarningBox');
-      const warningText = document.getElementById('drawerWarningText');
-      if (item.warningText) {
-        warningText.textContent = item.warningText;
-        warningBox.classList.remove('hidden');
-      } else {
-        warningBox.classList.add('hidden');
-      }
+      let bodyHTML = "";
 
-      // Format / purpose
-      const formatSection = document.getElementById('drawerFormatSection');
-      const formatText = document.getElementById('drawerFormatText');
-      if (item.formatText) {
-        formatText.textContent = item.formatText;
-        formatSection.classList.remove('hidden');
-      } else {
-        formatSection.classList.add('hidden');
-      }
-
-      // Checklist / what to do
-      const taskList = document.getElementById('drawerTasksList');
-      taskList.innerHTML = '';
-      (item.tasks || []).forEach(task => {
-        const li = document.createElement('li');
-        li.className = "flex items-start gap-2 py-1";
-        li.innerHTML = `
-          <span class="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-1.5"></span>
-          <span class="leading-relaxed">${task}</span>
+      // Warning alert (if any)
+      if (item.warning) {
+        bodyHTML += `
+          <div class="p-3.5 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+            <svg class="w-4 h-4 text-red-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <div class="text-xs text-red-800 leading-relaxed font-medium">
+              ${item.warning}
+            </div>
+          </div>
         `;
-        taskList.appendChild(li);
+      }
+
+      // Detailed sections
+      item.details.forEach(sec => {
+        bodyHTML += `
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">${sec.section}</h4>
+            <ul class="space-y-2">
+              ${sec.items.map(bullet => `
+                <li class="flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0"></span>
+                  <span>${bullet}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
       });
 
-      // Show drawer
-      const overlay = document.getElementById('drawerOverlay');
-      const panel = document.getElementById('drawerPanel');
-      overlay.classList.remove('opacity-0', 'pointer-events-none');
-      panel.classList.remove('translate-x-full');
-      lucide.createIcons();
+      document.getElementById("drawerBody").innerHTML = bodyHTML;
+
+      // Show drawer & overlay
+      document.getElementById("drawerOverlay").classList.remove("hidden");
+      document.getElementById("detailDrawer").classList.remove("translate-x-full");
+      document.body.style.overflow = "hidden";
     }
 
     function closeDrawer() {
-      const overlay = document.getElementById('drawerOverlay');
-      const panel = document.getElementById('drawerPanel');
-      panel.classList.add('translate-x-full');
-      overlay.classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById("drawerOverlay").classList.add("hidden");
+      document.getElementById("detailDrawer").classList.add("translate-x-full");
+      document.body.style.overflow = "auto";
     }
 
-    document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
-    document.getElementById('closeDrawerBtnBottom').addEventListener('click', closeDrawer);
-    document.getElementById('drawerOverlay').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('drawerOverlay')) closeDrawer();
-    });
-
-    document.querySelectorAll('.module-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.module-tab').forEach(t => {
-          t.classList.remove('bg-slate-900', 'text-white', 'dark:bg-white', 'dark:text-slate-900');
-          t.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-600', 'dark:text-slate-300', 'border', 'border-slate-200', 'dark:border-slate-800');
-        });
-
-        tab.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-600', 'dark:text-slate-300', 'border', 'border-slate-200', 'dark:border-slate-800');
-        tab.classList.add('bg-slate-900', 'text-white', 'dark:bg-white', 'dark:text-slate-900');
-
-        selectedModule = tab.getAttribute('data-module');
-        renderList();
-      });
-    });
-
-    const dateModal = document.getElementById('setDateModal');
-    const dateSelect = document.getElementById('dateTargetSelect');
-
-    document.getElementById('addDateBtn').addEventListener('click', () => {
-      dateSelect.innerHTML = '';
-      deadlines.forEach(d => {
-        const opt = document.createElement('option');
-        opt.value = d.id;
-        opt.textContent = `[${d.module}] ${d.title} (${d.dateText})`;
-        dateSelect.appendChild(opt);
-      });
-      dateModal.classList.remove('hidden');
-    });
-
-    function closeDateModal() {
-      dateModal.classList.add('hidden');
-    }
-    document.getElementById('closeDateModalBtn').addEventListener('click', closeDateModal);
-    document.getElementById('cancelDateModalBtn').addEventListener('click', closeDateModal);
-
-    document.getElementById('dateForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const targetId = dateSelect.value;
-      const val = document.getElementById('dateInputVal').value.trim();
-      if (!val) return;
-
-      const target = deadlines.find(d => d.id === targetId);
-      if (target) {
-        target.dateText = val;
-        saveState();
-      }
-      document.getElementById('dateInputVal').value = '';
-      closeDateModal();
-    });
-
-    // Theme toggle
-    function initTheme() {
-      const isDark = localStorage.getItem('theme') === 'dark' || 
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun');
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
-      }
-      lucide.createIcons();
+    function selectModule(id) {
+      currentModule = id;
+      renderTabs();
+      renderDeadlines();
     }
 
-    document.getElementById('themeToggleBtn').addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
-      lucide.createIcons();
+    // Keyboard support for drawer closing
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
     });
 
-    // Init
-    window.addEventListener('DOMContentLoaded', () => {
-      initTheme();
-      loadState();
-      renderList();
-    });
+    // Initial render
+    renderTabs();
+    renderDeadlines();
   </script>
 </body>
 </html>
