@@ -82,7 +82,7 @@
 
   <!-- Slide-Over Detail Drawer -->
   <div id="drawerOverlay" class="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs z-40 hidden transition-opacity" onclick="closeDrawer()"></div>
-  <aside id="detailDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-200 ease-in-out flex flex-col">
+  <aside id="detailDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[500px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-200 ease-in-out flex flex-col">
     <!-- Drawer Header -->
     <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between bg-slate-50 dark:bg-slate-900/60">
       <div>
@@ -134,7 +134,7 @@
       document.getElementById('moonIcon').classList.toggle('hidden', isDark);
     }
 
-    // --- EXACT DATA SET ---
+    // --- EXACT DATA SET (No Hallucinations) ---
     const modules = [
       { id: "all", name: "All Modules" },
       { id: "fyp", name: "Final Year Project (Double Credit)" },
@@ -246,7 +246,74 @@
           }
         ]
       },
-      // 4. Concurrent Programming Coursework
+      // 4. Formal Methods Coursework (RELEASED)
+      {
+        id: "formal-cw",
+        moduleId: "formal",
+        moduleName: "Formal Methods",
+        title: "Coursework: Chess Tournament B Specification",
+        dateDisplay: "13:00, Tuesday, 17th November, 2026",
+        dateISO: "2026-11-17T13:00:00",
+        type: "Summative",
+        weight: "50% Weighting",
+        summary: "B-machine (.mch) specifying a 3-phase chess tournament simulated in ProB + Viva requirement.",
+        warning: "Qualifying Mark: 30%. Single .mch file uploaded directly to Blackboard. Viva Examination: Critical component — inability to explain or defend your specification during viva may result in substantial marks reduction or failure.",
+        details: [
+          {
+            section: "General Requirements & Simulation",
+            items: [
+              "Develop a B specification of a chess tournament using B tools.",
+              "Must be syntactically and type correct and work cleanly when simulated in ProB (initialises correctly, all operations model tournament without deadlock/invariant violation).",
+              "Upload a single .mch file directly onto Blackboard."
+            ]
+          },
+          {
+            section: "Data Constraints & Setup (12 Players & 3 Phases)",
+            items: [
+              "12 Players in decreasing order of ability: Alice (strongest), Bob, Christine, Dennis, Eloise, Frank, Gabrielle, Hugo, Ida, John, Kate, Louis (weakest).",
+              "Three Teams: red, blue, green (up to 4 players each, initially none).",
+              "Three Phases: team selection, match setup, game play.",
+              "Scheduled Matches: Each involves 2 players from different teams; up to 6 per player; up to 12 between each pair of teams; initially none (must track scheduling order).",
+              "Scores: Kept for each player and each team (initially 0). In gameplay, assume the more skilled player always wins."
+            ]
+          },
+          {
+            section: "Required Operations Specification",
+            items: [
+              "report <-- setPlayers(team, members): Adds 4 players to an empty team during team selection. If 2nd team is filled, remaining 4 players auto-assigned to 3rd team and phase changes to match setup. Reports teamsCompleted, success, or detailed error.",
+              "report <-- setupMatch(players): Pairs two players from different teams during match setup. Enforces max 6 matches/player and max 12 between their teams. Reports success or error.",
+              "report <-- undo: Undoes the most recently scheduled match (LIFO). Reports success or failure.",
+              "proceed: Transitions to game play once every player has 6 matches and each team pair has 12 matches.",
+              "nextGame: Plays next scheduled match in game play, updates winner's score, and removes game. Higher skilled player wins.",
+              "restart: Resets teams and scores back to team selection phase once all matches have been played in game play phase.",
+              "playerScores(team): Reports current scores for all players in the given team."
+            ]
+          },
+          {
+            section: "Marking Scheme (100 Marks)",
+            items: [
+              "Sets and constants: 15 Marks",
+              "Variables, invariant and initialisation: 15 Marks",
+              "setPlayers operation: 10 Marks",
+              "setupMatch operation: 10 Marks",
+              "undo operation: 10 Marks",
+              "proceed operation: 10 Marks",
+              "nextGame operation: 10 Marks",
+              "restart operation: 10 Marks",
+              "playerScores operation: 10 Marks"
+            ]
+          },
+          {
+            section: "Late Penalty & Assessment Regulations",
+            items: [
+              "Up to 24 hours / 1 working day late: 10 marks deducted (40-49% capped at 40%).",
+              "More than 24 hours late: 0% recorded unless formal Mitigating Circumstances (MC) are approved.",
+              "Viva Verification: If authenticity is questioned, a viva conversation with two academics will take place. Non-attendance results in a mark of zero."
+            ]
+          }
+        ]
+      },
+      // 5. Concurrent Programming Coursework (RELEASED)
       {
         id: "concurrent-cw",
         moduleId: "concurrent",
@@ -293,7 +360,7 @@
           }
         ]
       },
-      // 5. FYP - Summative 2
+      // 6. FYP - Summative 2
       {
         id: "fyp-summative-2",
         moduleId: "fyp",
@@ -324,7 +391,7 @@
           }
         ]
       },
-      // 6. FYP - Summative 3
+      // 7. FYP - Summative 3
       {
         id: "fyp-summative-3",
         moduleId: "fyp",
@@ -347,7 +414,7 @@
           }
         ]
       },
-      // 7. FYP - Summative 4
+      // 8. FYP - Summative 4
       {
         id: "fyp-summative-4",
         moduleId: "fyp",
@@ -370,7 +437,7 @@
           }
         ]
       },
-      // 8. Placeholders for other announced components
+      // 9. Placeholders for other unannounced components
       {
         id: "concurrent-ict",
         moduleId: "concurrent",
@@ -385,29 +452,7 @@
         details: [
           {
             section: "Information",
-            items: [
-              "Official schedule and guidelines have not been released by the module leader yet."
-            ]
-          }
-        ]
-      },
-      {
-        id: "formal-cw",
-        moduleId: "formal",
-        moduleName: "Formal Methods",
-        title: "Coursework",
-        dateDisplay: "Date to be announced",
-        dateISO: null,
-        type: "Summative",
-        weight: "Assessment Component",
-        summary: "Coursework component for Formal Methods module.",
-        warning: null,
-        details: [
-          {
-            section: "Information",
-            items: [
-              "Module coursework brief and submission date have not been published yet."
-            ]
+            items: ["Official schedule and guidelines have not been released by the module leader yet."]
           }
         ]
       },
@@ -492,7 +537,14 @@
         dateISO: null,
         type: "Summative",
         weight: "Assessment Component",
-        summary: "ICT date to be announced."
+        summary: "In-class test component for OORO module.",
+        warning: null,
+        details: [
+          {
+            section: "Information",
+            items: ["ICT date to be announced."]
+          }
+        ]
       }
     ];
 
